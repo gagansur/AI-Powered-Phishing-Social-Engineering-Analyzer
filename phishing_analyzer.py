@@ -1,29 +1,34 @@
+import streamlit as st
 import google.generativeai as genai
+import os
 
-# 1. Setup your API Key
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+# 1. Setup Page Config
+st.set_page_config(page_title="AI Phishing Scout", page_icon="🛡️")
+st.title("🛡️ AI Phishing & Social Engineering Scout")
+st.write("Paste any suspicious email below to see the AI's risk analysis.")
+
+# 2. Secure API Key (For Streamlit Cloud)
+# In your local test, you can use os.getenv. In the cloud, we'll use st. secrets.
+api_key = st.secrets["GOOGLE_API_KEY"] if "GOOGLE_API_KEY" in st.secrets else os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=api_key)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-def analyze_email(email_content):
-    # 2. The "Security Prompt" (This is the secret sauce for your resume)
-    prompt = f"""
-    Act as a Senior Cyber Security Analyst. Analyze the following email for signs of phishing, 
-    social engineering, or malicious intent. 
-    
-    Provide a report in this format:
-    - Risk Score: (0-10)
-    - Tactics Detected: (e.g., Urgency, Authority, Suspicious Link)
-    - Analysis: (Why it is or isn't suspicious)
-    
-    Email Content:
-    ---
-    {email_content}
-    ---
-    """
-    
-    response = model.generate_content(prompt)
-    return response.text
+# 3. User Interface
+email_input = st.text_area("Paste Email Content Here:", height=250, placeholder="Example: Dear user, your account is locked...")
 
-# 3. Test it
-sample_email = "URGENT: Your account has been locked. Click here to verify: http://bit.ly/fake-link"
-print(analyze_email(sample_email))
+if st.button("Analyze Email"):
+    if email_input:
+        with st.spinner('Analyzing tactics...'):
+            prompt = f"""
+            Act as a Senior Cyber Security Analyst. Analyze this email for phishing:
+            {email_input}
+            Return a report with: 
+            - Risk Level (Safe/Low/Medium/High)
+            - Detected Tactics (e.g., sense of urgency, fake authority)
+            - Final Verdict
+            """
+            response = model.generate_content(prompt)
+            st.subheader("Analysis Result:")
+            st.info(response.text)
+    else:
+        st.warning("Please paste an email first!")
