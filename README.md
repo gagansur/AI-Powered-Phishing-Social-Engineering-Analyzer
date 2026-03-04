@@ -1,5 +1,5 @@
 # AI-Powered-Phishing-Social-Engineering-Analyzer
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](YOUR_STREAMLIT_URL_HERE)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]((https://ai-powered-phishing-social-engineering-analyzer-livetool.streamlit.app/)
 Try it out! with these examples or any email in your inbox that looks suspicious to you. You can try any Spam email, too.
 
 Sample 1 (Phish): "Urgent: Your payroll was declined. Click here to re-enter your SSN."
