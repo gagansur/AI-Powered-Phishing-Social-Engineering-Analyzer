@@ -11,7 +11,7 @@ st.write("Paste any suspicious email below to see the AI's risk analysis.")
 # In your local test, you can use os.getenv. In the cloud, we'll use st. secrets.
 api_key = st.secrets["GOOGLE_API_KEY"] if "GOOGLE_API_KEY" in st.secrets else os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
 
 # 3. User Interface
 email_input = st.text_area("Paste Email Content Here:", height=250, placeholder="Example: Dear user, your account is locked...")
