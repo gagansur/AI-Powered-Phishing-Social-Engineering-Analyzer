@@ -2,18 +2,30 @@ import streamlit as st
 import google.generativeai as genai
 import os
 
-# 1. Setup Page Config
-st.set_page_config(page_title="AI Phishing Scout", page_icon="🛡️")
-st.title("🛡️ AI Phishing & Social Engineering Scout")
-st.write("Paste any suspicious email below to see the AI's risk analysis.")
-
-# 2. Secure API Key (For Streamlit Cloud)
-# In your local test, you can use os.getenv. In the cloud, we'll use st. secrets.
-api_key = st.secrets["GOOGLE_API_KEY"] if "GOOGLE_API_KEY" in st.secrets else os.getenv("GOOGLE_API_KEY")
+# 1. Setup API Key with fallback
+api_key = st.secrets.get("GOOGLE_API_KEY") or os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=api_key)
- # Gemini 1.5 is legacy; moving to 2.0 Flash for production
-model = genai.GenerativeModel('gemini-2.0-flash')
 
+# 2. DEBUG SECTION: This identifies what models YOUR key can actually see
+try:
+    models = [m.name for m in genai.list_models()]
+    st. sidebar.write("✅ API Connected")
+    st. sidebar.write(f"Available Models: {models}")
+    
+    # Logic to auto-select the best available model
+    if 'models/gemini-1.5-flash' in models:
+        target_model = 'gemini-1.5-flash'
+    elif 'models/gemini-pro' in models:
+        target_model = 'gemini-pro'
+    else:
+        target_model = models[0] if models else "gemini-pro."
+        
+except Exception as e:
+    st. sidebar.error(f"❌ API Error: {e}")
+    target_model = "gemini-pro"
+
+# 3. Initialize Model
+model = genai.GenerativeModel(target_model)
 # 3. User Interface
 email_input = st.text_area("Paste Email Content Here:", height=250, placeholder="Example: Dear user, your account is locked...")
 
