@@ -25,7 +25,7 @@ except Exception as e:
     target_model = "gemini-pro"
 
 # 3. Initialize Model
-model = genai.GenerativeModel(target_model)
+model = genai.GenerativeModel('gemini-2.5-flash')
 # 3. User Interface
 email_input = st.text_area("Paste Email Content Here:", height=250, placeholder="Example: Dear user, your account is locked...")
 
